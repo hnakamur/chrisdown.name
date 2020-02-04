@@ -643,7 +643,7 @@ from 4.20 onwards and can be enabled with `CONFIG_PSI=y`. See my talk at SREcon
 at around the 25:05 mark:
 -->
 
-{% youtube beefUhRH5lU %}
+[![SREcon19 Asia/Pacific - Linux Memory Management at Scale: Under the Hood](http://img.youtube.com/vi/beefUhRH5lU/0.jpg)](http://www.youtube.com/watch?v=beefUhRH5lU "SREcon19 Asia/Pacific - Linux Memory Management at Scale: Under the Hood")
 
 ## 結論 <!-- In conclusion -->
 
