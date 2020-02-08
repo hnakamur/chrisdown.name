@@ -5,8 +5,7 @@
 ---
 
 [cgroup2](https://facebookmicrosites.github.io/cgroup2/) プロジェクトでの私の仕事の一部として Linux システムのリソース管理についてエンジニアと話すことに多くの時間をかけてきました。
-これらの会話を通じてどんどん明らかになってきた 1 つの事実は多くのエンジニア、シニア SRE たちでさえも、 Linux のメモリ管理についていくつかのよくある誤解を持っていて、
-そしてそれが彼らがサポートするサービスやシステムが本来確実に稼働したり効率的に稼働したりできていたはずのところをそうできていない原因になっているということです。
+これらの会話を通じてどんどん明らかになってきた 1 つの事実は多くのエンジニアは、シニア SRE たちでさえも、 Linux のメモリ管理についていくつかのよくある誤解を持っていて、そしてそれが彼らがサポートするサービスやシステムが本来確実に稼働したり効率的に稼働したりできていたはずのところをそうできていない原因になっているということです。
 <!--
 As part of my work on the
 [cgroup2](https://facebookmicrosites.github.io/cgroup2/) project, I spend a lot
@@ -41,16 +40,16 @@ useful. Please feel free to e-mail me with any questions or comments.
 
 ## 鍵となるタイムスタンプ <!-- Key timestamps -->
 
-各セクションがその次のセクションの構成するのに役立ちますので講演全体を見ることをお勧めしますが、いくつかのキーポイントとなる箇所を以下に示します。
+各セクションがその次のセクションを構成するのに役立ちますので講演全体を見ることをお勧めしますが、いくつかのキーポイントとなる箇所を以下に示します。
 <!--
 I recommend watching the whole talk, since each section helps set up the next, but here are some key takeaways:
 -->
 
-- 2:18: [リソース管理は重要であり、信頼性と効率性の両方が必要です](https://youtu.be/beefUhRH5lU?t=138) <!-- [Resource control is important, you need it both for reliability and efficiency](https://youtu.be/beefUhRH5lU?t=138) -->
+- 2:18: [リソース管理は重要であり、信頼性と効率性の両方のために必要です](https://youtu.be/beefUhRH5lU?t=138) <!-- [Resource control is important, you need it both for reliability and efficiency](https://youtu.be/beefUhRH5lU?t=138) -->
 - 6:34: [単一のリソースだけにリミットをかけると、事態は悪化するかもしれません](https://youtu.be/beefUhRH5lU?t=395) <!-- [If you just limit one resource alone, it may actually make things worse](https://youtu.be/beefUhRH5lU?t=395) -->
 - 7:28: [リソース管理は一見するよりもはるかに複雑なものです](https://youtu.be/beefUhRH5lU?t=448) <!-- [Resource control is much more complicated than it seems](https://youtu.be/beefUhRH5lU?t=448) -->
-- 12:56: [「回収可能」であるということは保証ではなく、多くの人々が誤解していますが、キャッシュやバッファはフリーメモリのようには振る舞いません](https://youtu.be/beefUhRH5lU?t=776) <!-- [Being "reclaimable" isn't a guarantee, caches and buffers don't act like free memory, even though many people think they do](https://youtu.be/beefUhRH5lU?t=776) -->
-- 14:54: [私たちは RSS 意味があるふりをしていますが、それは測定が簡単だからであって、有用な何かを計測しているからではありません](https://youtu.be/beefUhRH5lU?t=894) <!-- [We measure RSS and pretend it's meaningful because it's easy to measure, not because it measures anything useful](https://youtu.be/beefUhRH5lU?t=894) -->
+- 12:56: [多くの人々が誤解していますが、「回収可能」であるということは保証ではなく、キャッシュやバッファはフリーメモリのようには振る舞いません](https://youtu.be/beefUhRH5lU?t=776) <!-- [Being "reclaimable" isn't a guarantee, caches and buffers don't act like free memory, even though many people think they do](https://youtu.be/beefUhRH5lU?t=776) -->
+- 14:54: [私たちは RSS を計測しそれに意味があるふりをしていますが、それは簡単に計測できるからであって、有用な何かを測れるものだからではありません](https://youtu.be/beefUhRH5lU?t=894) <!-- [We measure RSS and pretend it's meaningful because it's easy to measure, not because it measures anything useful](https://youtu.be/beefUhRH5lU?t=894) -->
 - 16:12: [巨大なメモリを持つマシンでさえ、スワップは重要です](https://youtu.be/beefUhRH5lU?t=972) <!-- [Swap matters, even on machines with huge amounts of memory](https://youtu.be/beefUhRH5lU?t=972) -->
 - 18:59: [OOM キラーは OOM の状況下でもあなたの友達ではないですし、あなたが期待するようにはたぶん動かないでしょう](https://youtu.be/beefUhRH5lU?t=1139) <!-- [The OOM killer is often not your friend in an OOM situation, and probably doesn't work in the way you expect](https://youtu.be/beefUhRH5lU?t=1139) -->
 - 22:10: [メモリ回収の異なる種別となぜそれが重要か](https://youtu.be/beefUhRH5lU?t=1330) <!-- [Different types of memory reclaim and why they matter](https://youtu.be/beefUhRH5lU?t=1330) -->
@@ -60,5 +59,5 @@ I recommend watching the whole talk, since each section helps set up the next, b
 - 34:42: [何かにリミットをかけることは一般的にはうまく行かないので代わりに保護を作りましょう](https://youtu.be/beefUhRH5lU?t=2082) <!-- [Limiting things generally doesn't work well, so let's create protections instead](https://youtu.be/beefUhRH5lU?t=2082) -->
 - 37:21: [これらのプリミティブを全て組み合わせれば効率の良いハイアベイラビリティなシステムを作れます](https://youtu.be/beefUhRH5lU?t=2241) <!-- [Putting all of these primitives together to create an efficient, high availability system](https://youtu.be/beefUhRH5lU?t=2241) -->
 - 46:09: [Facebook での本番運用での結果](https://youtu.be/beefUhRH5lU?t=2769) <!-- [Results from Facebook production](https://youtu.be/beefUhRH5lU?t=2769) -->
-- 48:03: [これらの概念のいくつかを使って Android の改善に役立てる](https://youtu.be/beefUhRH5lU?t=2883) <!-- [Using some of these new concepts to help improve Android](https://youtu.be/beefUhRH5lU?t=2883) -->
+- 48:03: [これらの新しい概念のいくつかを使って Android の改善に役立てる](https://youtu.be/beefUhRH5lU?t=2883) <!-- [Using some of these new concepts to help improve Android](https://youtu.be/beefUhRH5lU?t=2883) -->
 - 48:53: [この講演のアドバイスをあなた自身でどのようにして実際に利用するか](https://youtu.be/beefUhRH5lU?t=2933) <!-- [How to practically make use of the advice in this talk yourself](https://youtu.be/beefUhRH5lU?t=2933) -->

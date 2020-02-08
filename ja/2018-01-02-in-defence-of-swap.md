@@ -66,7 +66,7 @@ the hood for memory management.
 これらのディスカッションで繰り返されるトピックはスワップです。
 スワップは激しい論争の的になり、長年 Linux に取り組んでいる人たちにですらほとんど理解されていないトピックです。
 多くの人はスワップを無意味だと考えていたりあるいは盛大に悪影響を及ぼすと考えています。
-メモリが十分でなくディスクがページングに必要な容量を提供するための必要悪だった時代の古い考え方です。
+しかしそれはメモリが十分でなくディスクがページングに必要な容量を提供するための必要悪だった時代の古い考え方です。
 この発言は近年いまだにかなりの頻度であちこちで見られ、私は同僚、友人、業界の仲間たちとディスカッションし、過去に比べて格段に増えた物理メモリを持つモダンなコンピュータ上でもスワップが引き続き有用な概念であることを理解するのを助けてきました。
 <!--
 A repeated topic in these discussions has been swap. Swap is a hotly contested
@@ -156,7 +156,7 @@ will refer to them as *anon* memory.
 
 他のタイプのメモリもあります。共有メモリ、スラブメモリ、カーネルスタックのメモリ、バッファなどです。
 ですが、 anonymous メモリと file メモリが最もよく知られており理解しやすいので、ここでの例ではそれらを使います。
-が、ここでの例はこれらのタイプにも同様に当てはまります。
+が、ここでの例はこれらの他のタイプにも同様に当てはまります。
 <!--
 There are other types of memory too -\- shared memory, slab memory, kernel stack
 memory, buffers, and the like -\- but anonymous memory and file memory are the
@@ -219,7 +219,7 @@ as one of the top results from typing "what is swap" in Google:
 > スワップは実質的に緊急メモリです。
 > あなたが持っている RAM よりも多くの物理メモリをシステムが一時的に必要とするときのために取っておく領域です。
 > スワップは遅くて非効率という意味で「悪」と考えられており、システムがスワップを定常的に使う必要があるのであれば、それは明らかに十分なメモリを持っていないということです。 […]
-> あなたの要求を全て処理するのに十分な RAM があり、それを超えることが絶対怒らないと言えるなら、スワップスペースなしでシステムを稼働することは完全に安全と言えるでしょう。
+> あなたの要求を全て処理するのに十分な RAM があり、それを超えることが絶対起こらないと言えるなら、スワップスペースなしでシステムを稼働することは完全に安全と言えるでしょう。
 
 <!--
 > Swap is essentially emergency memory; a space set aside for times when your
@@ -266,7 +266,7 @@ eligible for reclaim as their more trivially reclaimable friends, like clean
 file pages, allowing more efficient use of available physical memory.
 -->
 
-**スワップは主に回収の平等さのための機構であり、緊急事態の際の「追加のメモリ」ではないのです。スワップがあなたのアプリケーションを遅くする正体ではありません。全体的なめもり逼迫の状態に入ることがあなたのアプリケーションを遅くする正体なのです。**
+**スワップは主に回収の平等さのための機構であり、緊急事態の際の「追加のメモリ」ではないのです。スワップがあなたのアプリケーションを遅くする正体ではありません。全体的なメモリ争奪の状態に入ることがあなたのアプリケーションを遅くする正体なのです。**
 <!--
 **Swap is primarily a mechanism for equality of reclamation, not for emergency
 "extra memory". Swap is not what makes your application slow -\- entering
@@ -299,14 +299,14 @@ uncommon scenarios:
 ## スワップのあるなしで何が起こるかを調べる <!-- Examining what happens with/without swap -->
 
 典型的な状況でスワップのあるなしでパフォーマンスがどうなるかを見てみましょう。
-[cgroup v2 についての私の講演](https://www.youtube.com/watch?v=ikZ8_mRotT4) で「メモリ逼迫」についてのメトリクスについて話しています。
+[cgroup v2 についての私の講演](https://www.youtube.com/watch?v=ikZ8_mRotT4) で「メモリ争奪」についてのメトリクスについて話しています。
 <!--
 Let's look at typical situations, and how they perform with and without swap
 present. I talk about metrics around "memory contention" in my [talk on cgroup
 v2](https://www.youtube.com/watch?v=ikZ8_mRotT4).
 -->
 
-### メモリ逼迫がないか程度が低い時 <!-- Under no/low memory contention -->
+### メモリ争奪がないか程度が低い時 <!-- Under no/low memory contention -->
 
 - **スワップがある時:** プロセスのライフサイクルの小さな一部のみで使用される、めったに使われない anonymous メモリをスワップアウトの対象として選ぶことができ、そのメモリをキャッシュのヒット率を改善するのに使ったり、あるいは他の最適化をしたりできます。
   <!-- **With swap:** We can choose to swap out rarely-used anonymous memory that
@@ -319,7 +319,7 @@ v2](https://www.youtube.com/watch?v=ikZ8_mRotT4).
   some workloads this may represent a non-trivial drop in performance due to
   stale, anonymous pages taking space away from more important use. -->
 
-### 中程度あるいは高度にメモリ逼迫している時 <!-- Under moderate/high memory contention -->
+### 中程度あるいは高度にメモリ争奪がある時 <!-- Under moderate/high memory contention -->
 
 - **スワップがある時:** 全てのメモリ種別が同じ確率で回収されます。これはページの回収が成功する可能性がより高いことを意味します。
   つまり、回収後にすぐ再びフォールトバック（スラッシング）しないようなページを回収できる可能性が上がるということです。
@@ -330,7 +330,7 @@ v2](https://www.youtube.com/watch?v=ikZ8_mRotT4).
 - **スワップがない時:** anonymous ページは行き先が無いのでメモリ内にロックされます。
   そもそも一部のメモリ種別しか回収可能でないので、長期間にわたるページの回収の成功確率はより低くなります。
   ページスラッシングのリスクはより高くなります。
-  詳しくないユーザはこの状況でもディスク I/O が発生するより良いと考えるかもしれませんが、それは正しくなりません。
+  詳しくないユーザはこの状況でもディスク I/O が発生するより良いと考えるかもしれませんが、それは正しくありません。
   実際にはスワップのディスク I/O の代わりにホットなページキャッシュをドロップしたり今後すぐに必要となるコードセグメントをドロップすることに単に移行しているだけなのです。
   <!-- **Without swap:** Anonymous pages are locked into memory as they have nowhere
   to go. The chance of successful long-term page reclamation is lower, as we
@@ -342,8 +342,8 @@ v2](https://www.youtube.com/watch?v=ikZ8_mRotT4).
 
 ### メモリ使用が一時的にスパイクしている時 <!-- Under temporary spikes in memory usage -->
 
-- **スワップがある時:** 一時的なスパイクに大してより回復力は高くなりますが、深刻なメモリ飢餓の場合のメモリスラッシングの開始から OOM キラーまでの期間を引き延ばせるかもしれません。
-  メモリ逼迫の扇動者に対してより可視性が高まり、コントロールされた介入を実行できます。
+- **スワップがある時:** 一時的なスパイクに大してより回復力は高くなり、深刻なメモリ飢餓の場合のメモリスラッシングの開始から OOM キラーまでの期間を引き延ばせるかもしれません。
+  メモリ逼迫の扇動者に対してより可視性が高まり、それらに対してより合理的に働きかけ、コントロールされた介入を実行できます。
   <!-- **With swap:** We're more resilient to temporary spikes, but in cases of
   severe memory starvation, the period from memory thrashing beginning to the
   OOM killer may be prolonged. We have more visibility into the instigators of
@@ -378,8 +378,8 @@ v2, did you? ;-)
 ですので、あなたがカーネルに助言を与えられることが重要です。
 歴史的には実行可能な唯一のチューニングはシステムレベルで `vm.swappiness` を使うことだけでした。
 これには 2 つの問題があります。
-`vm.swappiness` はより大きなヒューリスティックなシステムの小さな一部に注入するだけなので理解するのが信じられないほど難しいです。
-そしてプロセス群のより小さなセットではなくシステム全体に対する設定であることです。
+`vm.swappiness` はより大きなヒューリスティックなシステムの小さな一部に注入するだけなのと、
+プロセス群のより小さなセットではなくシステム全体に対する設定であるので、理解するのが信じられないほど難しいです。
 <!--
 Obviously, it's hard for a generic heuristic algorithm to be right all the time,
 so it's important for you to be able to give guidance to the kernel.
@@ -390,9 +390,9 @@ system, and it also is system-wide instead of being granular to a smaller set
 of processes.
 -->
 
-`mlock` を使ってページをメモリ内にロックすることも出来ますが、これはプログラムコードを修正するか、 `LD_PRELOAD` で楽しむか、実行時にデバッガで恐ろしいことをするかのいずれかが必要です。
-VM ベースの言語ではこれはあまりうまく動きません。
-というのは、一般的にはアロケーションについてあなたが制御できないので結局 `mlockall` を使わざるを得なくなり、それでは実際に大切にしたいページに対して正確さが無いからです。
+`mlock` を使ってページをメモリ内にロックすることも出来ますが、これはプログラムコードを修正するか、 `LD_PRELOAD` で楽しく遊ぶか、実行時にデバッガで恐ろしいことをするかのいずれかが必要です。
+さらに VM ベースの言語ではこれはあまりうまく動きません。
+というのは、一般的にはアロケーションについてあなたが制御できないので結局 `mlockall` を使わざるを得なくなり、それでは実際に大切にしたいページに対して正確に制御できないからです。
 <!--
 You can also use `mlock` to lock pages into memory, but this requires either
 modifying program code, fun with `LD_PRELOAD`, or doing horrible things with a
@@ -402,10 +402,10 @@ since you generally have no control over allocation and end up having to
 -->
 
 cgroup v2 は `memory.low` の形式で cgroup 単位の調整が可能で、これによりメモリ使用量がある閾値を下回ったら他のアプリケーションからメモリを回収することを優先するようカーネルに伝えることができます。
-これによりカーネルが私たちのアプリケーションの部分をスワップアウトするのを防ぐだけでなく、メモリ逼迫時に他のアプリケーションから回収することを優先するようにできます。
-通常の状況下では、カーネルのスワップのロジックは一般的にはかなり良く、ページを機会に応じてスワップアウトするのを許可することは一般的にシステムノパフォーマンスを増大します。
+これによりカーネルが私たちのアプリケーションの部分をスワップアウトするのを防ぐだけでなく、メモリ争奪時に他のアプリケーションから回収することを優先するようにできます。
+通常の状況下では、カーネルのスワップのロジックは一般的にはかなり良く、ページを機会に応じてスワップアウトするのを許可することは一般的にシステムのパフォーマンスを増大します。
 大量のメモリ争奪下でのスワップのスラッシングは理想的ではないですが、それはスワップ機構の問題というよりも単にメモリ全体を使い切ったことによる特性です。
-これらの状況では、メモリ逼迫の圧力が積みあがるときに致命的でないプロセスが自分をキルすることでフェールファーストすることが大抵は望ましいでしょう。
+これらの状況では、メモリ逼迫の圧力が積みあがるときに致命的でないプロセスが自分をキルすることでフェールファーストすることがたいていは望ましいでしょう。
 <!--
 cgroup v2 has a tunable per-cgroup in the form of `memory.low`, which allows us
 to tell the kernel to prefer other applications for reclaim below a certain
@@ -421,7 +421,7 @@ processes when memory pressure starts to build up.
 -->
 
 これには単に OOM キラーに頼るということはできません。
-OOM キラーはシステムが深刻的に不健全になりしばらくそれが続く状態に *既に* 入った時に切迫した障害の状況にならない限り実行されないからです。
+OOM キラーはシステムが深刻的に不健全になりしばらくそれが続く状態に *既に* 入った時に切迫した障害の状況になったときにしか実行されないからです。
 あなたは OOM キラーについて一度でも考える前に、適切な機会にあなた自身で状況を処理する必要があります。
 <!--
 You can not simply rely on the OOM killer for this. The OOM killer is only
@@ -465,7 +465,7 @@ purged to make way for these infrequently accessed anonymous pages.
 -->
 
 山ほどのディスクスペースと最近 (4.0+) のカーネルをお持ちでしたら、より大きなスワップは小さなスワップよりほぼ常に良いです。
-より古いカーネルの `kswapd` 、これはスワップを管理する責任を負うカーネルプロセスの 1 つです、歴史的にスワップをより多く持つほどメモリをアグレッシブにスワップアウトすることに非常に熱心すぎるものでした。
+より古いカーネルの `kswapd` 、これはスワップを管理する責任を負うカーネルプロセスの 1 つです、は歴史的にスワップをより多く持つほどメモリをアグレッシブにスワップアウトすることに非常に熱心すぎるものでした。
 最近では、大きな容量のスワップスペースがある時のスワッピングの振る舞いは著しく改善されています。
 カーネル 4.0+ を稼働していれば、モダンなカーネル上でより大きなスワップを持つことは熱心すぎるスワップに終わることはないはずです。
 ですので、スペースに余裕があれば、数 GB のスワップサイズを持つことはモダンなカーネルでは有効な選択肢でしょう。
@@ -486,7 +486,7 @@ kernels.
 私がお勧めするのは 2-3GB かそれ以上のスワップを持ついくつかのテストシステムをセットアップし、ささまざまな（メモリの）負荷状況の元で 1 週間程度の連続稼働をして何が起こるかをモニタリングすることです。
 その週の間深刻なメモリ飢餓が起きない限りはテストがあまり有用でなかったということになりますが、おそらくは数 MB 程度スワップが使用される結果になるでしょう。
 ですので、最低でもその程度のスワップが利用可能にしておくのと、それに加えて変化するワークロードのために少しのバッファを持つことはおそらく有用でしょう。
-また `atop` をロギングモードで使うと `SWAPSZ` カラムでどのアプリケーションがどれぐらいのページをスワップアウトされたか見ることができるので、もしあなたのサーバで歴史的なサーバの状態をログ出力するためにまだ `atop` を使っていない場合はおそらくあなたはこの実験の一部としてこれらのテストマシンに `atop` をロギングモードでセットアップしたいでしょう。
+また `atop` をロギングモードで使うと `SWAPSZ` カラムでどのアプリケーションがどれぐらいのページをスワップアウトされたか見ることができるので、もしあなたのサーバで歴史的なサーバの状態をログ出力するためにまだ `atop` を使っていない場合はおそらくあなたはこの実験の一部としてこれらのテストマシンに `atop` をロギングモードでセットアップすることをお勧めします。
 これはまたあなたのアプリケーションが *いつ* ページのスワップアウトを開始したかを教えてくれますので、それをログイベントや他のキーデータと紐づけることができます。
 <!--
 If you're more constrained with disk space, then the answer really depends on
@@ -509,7 +509,7 @@ events or other key data.
 
 検討する価値のあるもう一つのことはスワップメディアの性質です。
 どのページがいつ再フォールトするか正確に予想することはできないので、スワップの読み込みは非常にランダムになりがちです。
-SSD ではこれはあまり問題になりませんが、回転ディスクでは物理的な移動を実行する櫃王があるのでランダム I/O は非常に高くつきます。
+SSD ではこれはあまり問題になりませんが、回転ディスクでは物理的な移動を実行する必要があるのでランダム I/O は非常に高くつきます。
 一方で、 file ページの再フォールトは比較的ランダムでない可能性が高いです。
 というのは単一のアプリケーションが実行時に行う操作に関連するファイルは比較的断片化されていないからです。
 これは回転ディスク上では、あなたは aononymous ページをスワップアウトする代わりに file ページを回収するようによりバイアスをかけたいと思うかもしれないことを意味します。
@@ -540,7 +540,7 @@ physical RAM size.
 まず、 `vm.swappiness` が何をするものかを理解することが重要です。
 `vm.swappiness` はメモリ回収を anonymous ページの回収寄りにするのかあるいは file ページ寄りにするのかのバイアスを調整する sysctl です。
 それはこれを `file_prio` （file ページを回収する優先度）と `anon_prio` ( anonymous ページを改選する優先度） という 2 つの異なる属性を使って行います。
-`vm.swappiness` はその値が `anon_prio` のデフォルト値になり、また `file_prio` では 200 のデフォルト値から引き算されます。
+`vm.swappiness` はその値が `anon_prio` のデフォルト値になり、また `file_prio` は 200 のデフォルト値から `vm.swappiness` の値を引いた値になります。
 これは `vm.swappiness = 50` という値を設定した結果、 `anon_prio` は 50 になり、 `file_prio` は 150 になることを意味します（値そのものはあまり意味を持たず、もう片方との相対的な重みが意味を持ちます）。
 <!--
 First, it's important to understand what `vm.swappiness` does. `vm.swappiness`
@@ -558,8 +558,8 @@ to the other).
 これは、一般的には **vm.swappiness はあなたのハードウェアとワークロードに対して file メモリに比べて anonymous メモリを回収して再フォールトするのにどれぐらいのコストをかけるかの単なる比率である** ことを意味します。
 値が小さいほど、あなたのハードウェアではアクセス頻度の低い anonymous ページをスワップアウトとスワップインするのは高くつくとカーネルにより強く伝えることになります。
 値が大きいほど、あなたのハードウェアでは anonymous ページと file ページをスワップするコストは同程度であるとカーネルにより強く伝えることになります。
-モリ管理システムはこの値によらずメモリがいかにホットであるかに基づいて file か anonymous メモリのどちらをスワップするかを主に決めようとするでしょう。
-しかしそのどちらになってもおかしくないときに、コストの計算をスワップするほうに寄せるかあるいはファイルシステムのキャッシュをドロップするほうに寄せるかに swappiness は寄与します。
+メモリ管理システムはこの値よりもまずはメモリがいかにホットであるかに基づいて file か anonymous メモリのどちらをスワップするかを主に決めようとするでしょう。
+しかしそのどちらになってもおかしくないときに、コストの計算をスワップするほうに寄せるかあるいはファイルシステムのキャッシュをドロップするほうに寄せるかのどちらにするかに swappiness は寄与します。
 SSD では基本的にどちらも同程度のコストなので `vm.swappiness = 100` （完全に平等）と設定することはうまく機能するかもしれません。
 回転ディスクでは、スワップインは一般的にランダムリードを必要とするためスワッピングが著しく高くつくかもしれないので、より低い値にバイアスをかけたいと思うかもしれません。
 <!--
@@ -672,7 +672,7 @@ at around the 25:05 mark:
   monumentally screwed. The solutions here depend on your system: -->
     - cgroup ローカルかあるいはグローバルのメモリ逼迫に依存したシステムのワークロードを機会に応じて変えることができます。
       これはそもそもこれらの状況になることを防いでくれますが、メモリ逼迫についてのしっかりとしたメトリクスは Unix の歴史には欠乏していました。
-      再際にも [再フォールト検出](https://youtu.be/ikZ8_mRotT4?t=2145) の追加によってこれはまもなく改善されるでしょう。
+      幸いにも [再フォールト検出](https://youtu.be/ikZ8_mRotT4?t=2145) の追加によってこれはまもなく改善されるでしょう。
       <!-- You can opportunistically change the system workload depending on
       cgroup-local or global memory pressure. This prevents getting into these
       situations in the first place, but solid memory pressure metrics are
